@@ -70,6 +70,7 @@
   color: var(--color-surface);
   overflow: hidden;
   margin-top: 80px; /* Header space offset */
+  background: #0E0E0E; /* Dark base backdrop */
 }
 .heroLeft {
   background: #0E0E0E; /* Dark charcoal/black */
@@ -515,6 +516,17 @@ select.formControl {
   color: var(--color-accent-hover);
 }
 
+/* RESPONSIVE HAMBURGER & BUTTONS (DEFAULTS) */
+.hamburger {
+  display: none;
+}
+.mobileNavButton {
+  display: none;
+}
+.headerDesktopButton {
+  display: block;
+}
+
 @media (max-width: 1024px) {
   .heroContainer {
     grid-template-columns: 1fr;
@@ -556,12 +568,94 @@ select.formControl {
   .header {
     padding: 1rem 2rem;
   }
+  .headerDesktopButton {
+    display: none;
+  }
   .nav {
     display: none;
   }
-  .heroTitle {
-    font-size: 3.2rem;
+  .hamburger {
+    display: block;
+    background: none;
+    border: none;
+    color: var(--color-text-main);
+    cursor: pointer;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  
+  /* Mobile Menu Open Overlay */
+  .navOpen {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #FFFFFF;
+    padding: 6rem 2rem 2rem;
+    gap: 1.5rem;
+    z-index: 150;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  }
+  .navOpen a {
+    color: var(--color-text-main) !important;
+    font-size: 1.25rem;
+    font-weight: 700;
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 123, 255, 0.08);
+  }
+  .mobileNavButton {
+    display: block !important;
+    margin-top: 1rem;
+  }
+
+  /* Responsive Slanted Hero Section */
+  .hero {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    margin-top: 70px;
+  }
+  .heroLeft {
+    padding: 5rem 1.5rem 4rem;
+    z-index: 2;
+    width: 100%;
+    background: transparent; /* Allows backing image to render under transparent padding */
+  }
+  .heroLeft::after {
+    display: none; /* Disable skew slant overlay */
+  }
+  .heroRight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.18; /* Retain detailing image as faint overlay backdrop */
+  }
+  .heroTitle {
+    font-size: 2.6rem;
+  }
+  .heroSubtitle {
+    font-size: 1.05rem;
+  }
+
+  /* Value Prop Section */
+  .valueBarGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
   .section {
     padding: 5rem 1.5rem;
   }

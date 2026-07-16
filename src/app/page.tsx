@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { Clock, Shield, CheckCircle2, Star, MapPin, Mail, Phone, Droplets, Sparkles, Car } from 'lucide-react';
+import { Clock, Shield, CheckCircle2, Star, MapPin, Mail, Phone, Droplets, Sparkles, Car, Menu, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 import styles from './page.module.css';
@@ -21,6 +21,8 @@ export default function Home() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,16 +53,20 @@ export default function Home() {
       {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.logo} onClick={() => scrollTo('hero')}>Emerald <span>Detailing</span></div>
-        <nav className={styles.nav}>
-          <a onClick={() => scrollTo('hero')}>Home</a>
-          <a onClick={() => scrollTo('services')}>Interior</a>
-          <a onClick={() => scrollTo('services')}>Exterior</a>
-          <a onClick={() => scrollTo('services')}>Full Detailing</a>
-          <a onClick={() => scrollTo('services')}>Ceramic Coating</a>
-          <a onClick={() => scrollTo('map')}>Locations</a>
-          <a onClick={() => scrollTo('booking')}>Contact</a>
+        <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
+          <a onClick={() => { scrollTo('hero'); setMenuOpen(false); }}>Home</a>
+          <a onClick={() => { scrollTo('services'); setMenuOpen(false); }}>Interior</a>
+          <a onClick={() => { scrollTo('services'); setMenuOpen(false); }}>Exterior</a>
+          <a onClick={() => { scrollTo('services'); setMenuOpen(false); }}>Full Detailing</a>
+          <a onClick={() => { scrollTo('services'); setMenuOpen(false); }}>Ceramic Coating</a>
+          <a onClick={() => { scrollTo('map'); setMenuOpen(false); }}>Locations</a>
+          <a onClick={() => { scrollTo('booking'); setMenuOpen(false); }}>Contact</a>
+          <button onClick={() => { scrollTo('booking'); setMenuOpen(false); }} className={`btn-primary ${styles.mobileNavButton}`} style={{ padding: '0.75rem 2rem', borderRadius: '8px', width: '100%' }}>Get in Touch</button>
         </nav>
-        <button onClick={() => scrollTo('booking')} className="btn-primary" style={{ padding: '0.75rem 2rem', borderRadius: '8px' }}>Get in Touch</button>
+        <button onClick={() => scrollTo('booking')} className={`btn-primary ${styles.headerDesktopButton}`} style={{ padding: '0.75rem 2rem', borderRadius: '8px' }}>Get in Touch</button>
+        <button className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </header>
 
       {/* 1. HERO SECTION (Slanted Split Design) */}
@@ -85,7 +91,7 @@ export default function Home() {
         </div>
         
         <div className={styles.heroRight}>
-          <Image src="/service_interior.png" alt="Premium detailing action" fill style={{ objectFit: 'cover' }} priority />
+          <Image src="/service_interior.png" alt="Premium detailing action" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} priority />
         </div>
       </section>
 
@@ -130,7 +136,7 @@ export default function Home() {
               <button onClick={() => { setStep(3); scrollTo('booking'); }} className="btn-primary">Book Express Wash</button>
             </motion.div>
             <motion.div className={styles.serviceImageWrapper} initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <Image src="/service_wash.png" alt="Luxury car getting foam wash" fill style={{ objectFit: 'cover' }} />
+              <Image src="/service_wash.png" alt="Luxury car getting foam wash" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
             </motion.div>
           </div>
 
@@ -148,7 +154,7 @@ export default function Home() {
               <button onClick={() => { setStep(3); scrollTo('booking'); }} className="btn-primary">Book Complete Detail</button>
             </motion.div>
             <motion.div className={styles.serviceImageWrapper} initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <Image src="/service_interior.png" alt="Immaculate luxury car interior" fill style={{ objectFit: 'cover' }} />
+              <Image src="/service_interior.png" alt="Immaculate luxury car interior" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
             </motion.div>
           </div>
 
@@ -166,7 +172,7 @@ export default function Home() {
               <button onClick={() => { setStep(3); scrollTo('booking'); }} className="btn-primary">Book Ceramic Coating</button>
             </motion.div>
             <motion.div className={styles.serviceImageWrapper} initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-              <Image src="/service_ceramic.png" alt="Ceramic coating applied to car" fill style={{ objectFit: 'cover' }} />
+              <Image src="/service_ceramic.png" alt="Ceramic coating applied to car" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
             </motion.div>
           </div>
 
@@ -178,13 +184,13 @@ export default function Home() {
         <motion.h2 className={styles.sectionTitle} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>Our <span>Work</span></motion.h2>
         <div className={styles.galleryGrid}>
           <motion.div className={styles.galleryItem} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
-            <Image src="/gallery_1.png" alt="Before and after detailing" fill style={{ objectFit: 'cover' }} />
+            <Image src="/gallery_1.png" alt="Before and after detailing" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
           </motion.div>
           <motion.div className={styles.galleryItem} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <Image src="/gallery_2.png" alt="Gleaming luxury car in Seattle" fill style={{ objectFit: 'cover' }} />
+            <Image src="/gallery_2.png" alt="Gleaming luxury car in Seattle" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
           </motion.div>
           <motion.div className={styles.galleryItem} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
-            <Image src="/gallery_3.png" alt="Clean wheels and tires" fill style={{ objectFit: 'cover' }} />
+            <Image src="/gallery_3.png" alt="Clean wheels and tires" fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />
           </motion.div>
         </div>
       </section>
