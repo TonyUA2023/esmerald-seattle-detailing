@@ -1,0 +1,1607 @@
+/* ============================================================
+   BOOKING MODAL STYLES
+   Light Theme - Emerald Accents - Premium Glassmorphism & Cards
+   ============================================================ */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 20, 40, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modalWrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1100px;
+  height: 90vh;
+  max-height: 850px;
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Modal Header */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--color-border);
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.brandTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.brandEmerald {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-accent);
+}
+
+.brandApex {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-text-main);
+}
+
+.brandSubtitle {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-left: 0.5rem;
+  font-weight: 500;
+}
+
+.closeBtn {
+  background: var(--color-surface);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text-main);
+  transform: rotate(90deg);
+}
+
+/* Body Grid (Left Flow, Right Summary Sidebar) */
+.modalBodyGrid {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+/* Left Main Content Flow */
+.mainFlowContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+/* Step Progress Header */
+.stepProgressContainer {
+  padding: 1.5rem 2.5rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.progressTrack {
+  position: absolute;
+  top: 2.2rem;
+  left: 4.5rem;
+  right: 4.5rem;
+  height: 2px;
+  background: var(--color-border);
+  z-index: 1;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 0.4s ease;
+}
+
+.progressSteps {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100px;
+}
+
+.stepCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid var(--color-border);
+  color: var(--color-text-light);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.stepLabel {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-light);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.stepActive .stepCircle {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #FFFFFF;
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.stepActive .stepLabel {
+  color: var(--color-text-main);
+  font-weight: 700;
+}
+
+/* Step Content Wrapper */
+.stepContentScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 2.5rem;
+}
+
+.stepWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.stepHeading {
+  font-family: var(--font-title);
+  font-size: 1.35rem;
+  color: var(--color-text-main);
+  margin-bottom: 0.25rem;
+}
+
+.stepSubheading {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.dividerLine {
+  height: 1px;
+  background: var(--color-border);
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.sectionHeading {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  color: var(--color-text-main);
+  margin-bottom: 0.25rem;
+}
+
+.sectionSubheading {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+/* ============================================================
+   STEP 1: SERVICES & SIZE & ADDONS
+   ============================================================ */
+
+.serviceCardsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.serviceCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  cursor: pointer;
+  background: #FFFFFF;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.serviceCard:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+  background: var(--color-surface);
+}
+
+.serviceCardSelected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light) !important;
+  box-shadow: 0 4px 12px var(--color-accent-glow);
+}
+
+.serviceCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.changeServiceBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--color-accent-hover);
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.changeServiceBtn:hover {
+  background: var(--color-accent-light);
+}
+
+.serviceSelectRadio {
+  flex-shrink: 0;
+}
+
+.radioButton {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioChecked {
+  border-color: var(--color-accent);
+}
+
+.radioInner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.serviceInfoShort {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.serviceName {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.serviceDuration {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface-2);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.serviceDesc {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.servicePriceMatrix {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.miniPriceGrid {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.miniPriceGrid div {
+  background: #FFFFFF;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+/* Vehicle Size Selector */
+.vehicleSizeSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.sizeCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.sizeCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  background: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sizeCard:hover {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.sizeCardSelected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light) !important;
+  box-shadow: 0 4px 12px var(--color-accent-glow);
+}
+
+.sizeIcon {
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.sizeCardSelected .sizeIcon {
+  color: var(--color-accent);
+}
+
+.sizeName {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.sizePriceTag {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--color-accent-hover);
+}
+
+/* Add-ons List */
+.addonsSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.addonsListGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+}
+
+.addonItemCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  background: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.22s ease;
+}
+
+.addonItemCard:hover {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.addonItemChecked {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.addonLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.addonCheckbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.checkboxChecked {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.addonTextInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.addonItemName {
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.addonItemDesc {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.addonItemPrice {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   STEP 2: DATE, TIME & LOGISTICS
+   ============================================================ */
+
+.calendarAndTimeGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Custom Calendar Card styling */
+.calendarCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  background: #FFFFFF;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendarMonthName {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--color-text-main);
+}
+
+.monthNav {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.monthNavBtn {
+  background: var(--color-surface);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+}
+
+.monthNavBtn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text-main);
+}
+
+.calendarGridWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+
+.calendarGridDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 0.35rem;
+}
+
+.emptyDay {
+  height: 32px;
+}
+
+.dayBtn {
+  height: 32px;
+  width: 32px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dayBtn:hover:not(.dayBtnDisabled) {
+  background: var(--color-surface-2);
+}
+
+.dayBtnSelected {
+  background: var(--color-accent) !important;
+  color: #FFFFFF !important;
+  font-weight: 750;
+  box-shadow: 0 4px 8px var(--color-accent-glow);
+}
+
+.dayBtnDisabled {
+  color: var(--color-text-light);
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Time Windows Panel styling */
+.timeWindowsPanel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  background: var(--color-surface);
+}
+
+.windowsPanelTitle {
+  font-family: var(--font-title);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.windowsPanelDesc {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.timeSessionsGridContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.timeSessionCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timeSectionLabel {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.timeSlotBtn {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.25rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.22s ease;
+}
+
+.timeSlotBtn:hover {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.timeSlotActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light) !important;
+  color: var(--color-accent-hover);
+  box-shadow: 0 2px 8px var(--color-accent-glow);
+}
+
+.timeSlotDisabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+  background: var(--color-surface-2) !important;
+  color: var(--color-text-light) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: none !important;
+}
+
+/* Utilities logistics questions */
+.utilitiesSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.utilitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.utilityQuestionCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.25s ease;
+}
+
+.utilityCardAnswered {
+  box-shadow: var(--shadow-sm);
+}
+
+.utilityHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.utilityHeader h4 {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.3;
+}
+
+.utilityIconBlue { color: #3B82F6; }
+.utilityIconOrange { color: #F59E0B; }
+
+.utilityButtonOptions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.utilityOptionBtn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.utilityOptionBtn:hover {
+  background: var(--color-surface-2);
+}
+
+.utilityOptionActive {
+  background: var(--color-accent-light) !important;
+  border-color: var(--color-accent);
+  color: var(--color-accent-hover);
+}
+
+.utilityDetailNotes {
+  min-height: 48px;
+}
+
+.utilityPointText {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.utilityPointTextMuted {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+/* ============================================================
+   STEP 3: CUSTOMER DETAILS
+   ============================================================ */
+
+.detailsForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.formLabel {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #EF4444;
+}
+
+.formControl {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  background: #FFFFFF;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.formControl:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.textareaControl {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  background: #FFFFFF;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+
+.textareaControl:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.inputHelp {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+}
+
+.inputErrorText {
+  color: #EF4444;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 550;
+  margin-top: 0.1rem;
+}
+
+.errorTextInline {
+  color: #EF4444;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 550;
+  margin-top: 0.25rem;
+}
+
+.errorAlert {
+  color: #EF4444;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(239, 68, 68, 0.08);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-top: 1rem;
+  border-left: 3px solid #EF4444;
+}
+
+/* Mobile summary block - hidden on PC, shown when sidebar collapses */
+.mobileSummaryCard {
+  display: none;
+}
+
+/* ============================================================
+   BOTTOM NAVIGATION BAR
+   ============================================================ */
+
+.flowNavButtons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2.5rem;
+  border-top: 1px solid var(--color-border);
+  background: #FFFFFF;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.backBtn {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  padding: 0.75rem 1.75rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  background: var(--color-surface);
+  color: var(--color-text-main);
+  border-color: var(--color-text-light);
+}
+
+.primaryBtn {
+  background: var(--color-accent);
+  border: none;
+  color: #FFFFFF;
+  border-radius: var(--radius-pill);
+  padding: 0.75rem 2.25rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  margin-left: auto;
+}
+
+.primaryBtn:hover {
+  background: var(--color-accent-hover);
+  box-shadow: 0 4px 12px var(--color-accent-glow);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   RIGHT COLUMN: STICKY SUMMARY PANEL (PC ONLY)
+   ============================================================ */
+
+.sidebarSummary {
+  width: 350px;
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.sidebarHeader {
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebarTitle {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.sidebarSubtitle {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.sidebarBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sidebarPlaceholderText {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+.summarySectionItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.summarySectionLabel {
+  font-family: var(--font-title);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  letter-spacing: 0.5px;
+}
+
+.summaryItemTitleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.summaryEmeraldIcon {
+  color: var(--color-accent);
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.summaryItemTitleRow strong {
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  color: var(--color-text-main);
+  display: block;
+}
+
+.summaryMutedLabel {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
+
+.summaryItemPrice {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.summaryAddonsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.summaryAddonRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.summaryScheduleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.summaryScheduleRow svg {
+  color: var(--color-text-muted);
+}
+
+.summaryLogisticsRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.summaryLogisticsRow strong {
+  color: var(--color-text-main);
+}
+
+/* Sidebar Footer */
+.sidebarFooter {
+  padding: 1.5rem 1.75rem;
+  border-top: 1px solid var(--color-border);
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.billingRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.billingDivider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.25rem 0;
+}
+
+.billingTotalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.billingTotalRow span {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.finalTotalValue {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-accent-hover);
+}
+
+.assuranceCard {
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  border: 1px solid var(--color-border);
+}
+
+.assuranceIcon {
+  color: var(--color-accent);
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.assuranceCard span {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+/* ============================================================
+   CONFIRMED SUCCESS SCREEN STYLE
+   ============================================================ */
+
+.successScreen {
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow-y: auto;
+  flex: 1;
+  max-width: 650px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.successCircle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 20px var(--color-accent-glow);
+}
+
+.successCheckIcon {
+  animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.successTitle {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  color: var(--color-text-main);
+  margin-bottom: 0.5rem;
+}
+
+.successSubtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.successDetailsBox {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.successDetailsBox h3 {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  color: var(--color-text-main);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.successSummaryGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.successField {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+}
+
+.successField span {
+  color: var(--color-text-muted);
+}
+
+.successField strong {
+  color: var(--color-text-main);
+  text-align: right;
+}
+
+.successFieldDivider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.25rem 0;
+}
+
+.successFieldTotal {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-top: 0.25rem;
+}
+
+.successFieldTotal span {
+  color: var(--color-text-main);
+}
+
+.successFieldTotal strong {
+  color: var(--color-accent-hover);
+}
+
+.successSecurityNote {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-light);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  margin-bottom: 2rem;
+}
+
+.successDoneBtn {
+  background: var(--color-text-main);
+  border: none;
+  color: #FFFFFF;
+  padding: 0.85rem 2.5rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.successDoneBtn:hover {
+  background: #000000;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN (MOBILE FULLSCREEN REDIRECTS)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .modalOverlay {
+    padding: 0;
+  }
+  
+  .backdrop {
+    display: none; /* Hide background cover on mobile to maximize viewport speed */
+  }
+  
+  .modalWrapper {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+  
+  .modalHeader {
+    padding: 1rem 1.25rem;
+  }
+  
+  .brandSubtitle {
+    display: none; /* Hide brand subtitle to fit smaller widths */
+  }
+  
+  .modalBodyGrid {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  .sidebarSummary {
+    display: none; /* Hide PC sidebar entirely on mobile */
+  }
+  
+  .stepProgressContainer {
+    padding: 1rem 1.25rem;
+  }
+  
+  .progressTrack {
+    left: 2.5rem;
+    right: 2.5rem;
+    top: 1.7rem;
+  }
+  
+  .stepCircle {
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
+  }
+  
+  .stepLabel {
+    font-size: 0.62rem;
+  }
+  
+  .stepContentScroll {
+    padding: 1.25rem;
+  }
+  
+  /* Step 1 styling collapse for mobile */
+  .sizeCardsGrid {
+    grid-template-columns: 1fr; /* Stack sizes */
+    gap: 0.5rem;
+  }
+  
+  .sizeCard {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    text-align: left;
+  }
+  
+  .sizeCardSelected {
+    border-left: 4px solid var(--color-accent);
+  }
+  
+  .serviceCard {
+    padding: 1rem;
+  }
+
+  .serviceCardHidden {
+    display: none !important;
+  }
+  
+  .serviceCardsGridCollapsed .serviceCardSelected {
+    padding: 0.75rem 1rem !important;
+    border-color: var(--color-accent) !important;
+    background: var(--color-accent-light) !important;
+    cursor: default;
+  }
+  
+  .serviceCardsGridCollapsed .serviceCardSelected .serviceCardDetailsCollapse {
+    display: none !important;
+  }
+  
+  .serviceCardsGridCollapsed .serviceCardSelected .changeServiceBtn {
+    display: inline-block !important;
+  }
+  
+  .serviceCardsGridCollapsed .serviceCardSelected .serviceSelectRadio {
+    display: none !important;
+  }
+
+  .serviceCardsGridCollapsed .serviceCardSelected .serviceName {
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 120px !important;
+  }
+  
+  .changeServiceBtn {
+    flex-shrink: 0 !important;
+  }
+
+  .servicePriceMatrix {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .miniPriceGrid {
+    gap: 0.4rem;
+  }
+  
+  /* Step 2 styling collapse for mobile */
+  .calendarAndTimeGrid {
+    grid-template-columns: 1fr; /* Stack calendar and times */
+    gap: 1rem;
+  }
+  
+  .timeWindowsPanel {
+    padding: 1rem;
+  }
+  
+  .utilitiesGrid {
+    grid-template-columns: 1fr; /* Stack water and power */
+    gap: 0.75rem;
+  }
+
+  .stepSubheading,
+  .sectionSubheading,
+  .utilityDetailNotes {
+    display: none !important;
+  }
+  
+  .utilityQuestionCard {
+    padding: 1rem !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Form components on mobile */
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  
+  /* Mobile summary card is activated inside scroll window */
+  .mobileSummaryCard {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    gap: 0.5rem;
+  }
+  
+  .mobileSummaryCard h4 {
+    font-family: var(--font-title);
+    font-size: 0.85rem;
+    color: var(--color-text-main);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .mobileSummaryRow {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+  }
+  
+  .mobileAddonName {
+    color: var(--color-text-muted);
+    font-size: 0.76rem;
+  }
+  
+  .mobileSummaryDivider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 0.2rem 0;
+  }
+  
+  .mobileSummaryTotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-title);
+    font-size: 0.85rem;
+  }
+  
+  .mobileSummaryTotal strong {
+    font-size: 1.15rem;
+    color: var(--color-accent-hover);
+  }
+  
+  /* Sticky footer bottom control navigation */
+  .flowNavButtons {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+  }
+  
+  .backBtn, .primaryBtn {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.8rem;
+  }
+
+  .successScreen {
+    padding: 2rem 1.25rem;
+  }
+}
+
+.freeBookingAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--color-accent-light);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-top: 1.25rem;
+  box-sizing: border-box;
+}
+
+.freeBookingShield {
+  color: var(--color-accent);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.freeBookingAlert strong {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-accent-hover);
+  margin-bottom: 0.15rem;
+}
+
+.freeBookingAlert p {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  margin: 0;
+}

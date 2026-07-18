@@ -1,15 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-
 :root {
-  --color-background: #F0F8FF;
-  --color-surface: #FFFFFF;
-  --color-text-main: #2F4F4F;
-  --color-text-muted: #5A7575;
-  --color-accent: #007BFF;
-  --color-accent-hover: #0056b3;
-  --color-glow: rgba(0, 123, 255, 0.4);
+  --color-background: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-surface-2: #F1F3F5;
+  --color-dark: #0A1428;
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+  --color-text-light: #9CA3AF;
+  --color-accent: #10B981;       /* Esmeral Green */
+  --color-accent-hover: #059669;
+  --color-accent-light: rgba(16, 185, 129, 0.1);
+  --color-accent-glow: rgba(16, 185, 129, 0.3);
+  --color-border: #E5E7EB;
   
-  --font-main: 'Inter', sans-serif;
+  --font-title: var(--font-title, 'Montserrat', sans-serif);
+  --font-body: var(--font-body, 'Inter', sans-serif);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 50px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
 }
 
 * {
@@ -22,10 +35,12 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: var(--font-main);
+  font-family: var(--font-body);
   background-color: var(--color-background);
   color: var(--color-text-main);
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -34,32 +49,39 @@ a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-weight: 800;
   line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-text-main);
 }
 
 p {
   line-height: 1.6;
+  font-family: var(--font-body);
 }
 
 .btn-primary {
   background-color: var(--color-accent);
   color: #fff;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 0.9rem 2rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-family: var(--font-title);
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
 }
 
 .btn-primary:hover {
   background-color: var(--color-accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--color-glow);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--color-accent-glow);
 }

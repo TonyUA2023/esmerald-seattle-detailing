@@ -1,0 +1,56 @@
+[
+  {
+    "id": "aquapel-glass",
+    "name": "Aquapel Glass Treatment",
+    "price": 55,
+    "description": "Hydrophobic glass coating that repels rain and improves night visibility."
+  },
+  {
+    "id": "leather-care",
+    "name": "Leather Care",
+    "price": 20,
+    "description": "pH-balanced leather conditioning to nourish and prevent dry cracking."
+  },
+  {
+    "id": "spray-wax",
+    "name": "Spray Wax",
+    "price": 30,
+    "description": "Quick polymer spray wax for an instant boost in paint gloss and slickness."
+  },
+  {
+    "id": "engine-dress",
+    "name": "Engine Dress",
+    "price": 30,
+    "description": "Safe engine bay degreasing, clean, and premium plastic dressing."
+  },
+  {
+    "id": "pet-hair",
+    "name": "Pet Hair Removal",
+    "price": 70,
+    "description": "Specialized brushing and vacuuming to lift stubborn embedded pet fur."
+  },
+  {
+    "id": "clay-bar-sealant",
+    "name": "Clay Bar & Sealant",
+    "price": 100,
+    "description": "Mechanical paint purification followed by a durable polymer sealant."
+  },
+  {
+    "id": "mold-removal",
+    "name": "Mold Removal",
+    "price": 50,
+    "description": "Anti-microbial steam sanitizing to safely eliminate mold and mildew."
+  },
+  {
+    "id": "seat-washing",
+    "name": "Seat Washing",
+    "price": 150,
+    "description": "Deep shampoo extraction wash specifically for fabric upholstery seats."
+  },
+  {
+    "id": "trim-restore",
+    "name": "Trim Restore",
+    "price": 60,
+    "description": "Deep restoration of faded exterior plastics back to a rich dark finish."
+  }
+]

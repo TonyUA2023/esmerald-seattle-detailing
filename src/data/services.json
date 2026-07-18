@@ -1,0 +1,78 @@
+[
+  {
+    "id": "premium-full-detail",
+    "name": "Premium Full Detail",
+    "featured": true,
+    "description": "Our premier, all-inclusive restoration package. Combining paint purification, gloss-enhancement, and hot-steam interior sanitation to reset your vehicle to showroom-grade perfection.",
+    "features": {
+      "exterior": [
+        "Scratch-free safe hand wash & micro-dry",
+        "Full clay bar paint decontamination & iron removal",
+        "High-gloss Carnauba wax & polymer sealant shield",
+        "Deep wheel decontamination & tire conditioning",
+        "Engine bay detailing & protective dressing",
+        "Hot steam detailing of door & trunk jambs"
+      ],
+      "interior": [
+        "Deep cabin hot steam disinfection & sanitizing",
+        "Full carpet, mat & upholstery shampoo extraction",
+        "Premium leather restoration & UV protectant shield",
+        "Meticulous cleaning of console, dash & air vents",
+        "Streak-free interior & exterior glass clarity",
+        "High-performance odor neutralizing treatment"
+      ]
+    },
+    "prices": {
+      "sedan": 300,
+      "midSizeSuv": 330,
+      "truckVan": 360
+    },
+    "duration": "5 - 7 Hours",
+    "image": "/gallery_1.png",
+    "tag": "Featured / Full Restoration"
+  },
+  {
+    "id": "signature-interior-detail",
+    "name": "Signature Interior Detail",
+    "featured": false,
+    "description": "Complete cabin renewal. Focuses on deep extraction, heavy stain removal, steam sterilization of contact points, and UV surface protection for a clean, odor-free cockpit.",
+    "features": [
+      "Deep hot-steam sterilization of all contact points",
+      "Full carpet, fabric seat & floor mat hot extraction",
+      "Meticulous leather cleaning & pH-balanced conditioning",
+      "Detailed scrub of dashboard, console & door panels",
+      "Thorough interior glass deep cleaning",
+      "Sanitizing odor neutralizer & freshness treatment"
+    ],
+    "prices": {
+      "sedan": 220,
+      "midSizeSuv": 240,
+      "truckVan": 265
+    },
+    "duration": "3 - 4 Hours",
+    "image": "/service_interior.png",
+    "tag": "Popular / Interior Focus"
+  },
+  {
+    "id": "signature-exterior-detail",
+    "name": "Signature Exterior Detail",
+    "featured": false,
+    "description": "Professional exterior restoration. Safe hand wash, complete paint decontamination, and premium wax coating to maximize depth, shine, and shield against environmental damage.",
+    "features": [
+      "Scratch-free safe two-bucket hand wash",
+      "Chemical iron spot & physical clay bar decontamination",
+      "Premium Carnauba wax & high-gloss sealant glaze",
+      "Precision rim deep cleaning & satin tire dressing",
+      "Steam cleaning of all door & trunk jambs",
+      "Streak-free exterior window & glass polishing"
+    ],
+    "prices": {
+      "sedan": 120,
+      "midSizeSuv": 150,
+      "truckVan": 180
+    },
+    "duration": "2 - 3 Hours",
+    "image": "/service_wash.png",
+    "tag": "Exterior Protection"
+  }
+]
