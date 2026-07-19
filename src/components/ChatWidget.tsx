@@ -38,8 +38,8 @@ export default function ChatWidget() {
   const [tenantId, setTenantId] = useState<string>("");
   const [chatId, setChatId] = useState<string>("");
   const [botName, setBotName] = useState<string>("Fernando");
-  const [agentName, setAgentName] = useState<string>("Fernando - Esmerald Detailing");
-  const [businessName, setBusinessName] = useState<string>("Esmerald Detailing");
+  const [agentName, setAgentName] = useState<string>("Fernando - LeadBridge IA");
+  const [businessName, setBusinessName] = useState<string>("LeadBridge Demo");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +48,7 @@ export default function ChatWidget() {
     setMounted(true);
 
     // Fetch agent config from LeadBridge IA API
-    if (AGENT_TOKEN && AGENT_TOKEN !== "YOUR_LB_AGENT_TOKEN_HERE") {
+    if (AGENT_TOKEN) {
       fetch(`${BACKEND_URL}/api/widget/token/${AGENT_TOKEN}`)
         .then((res) => res.json())
         .then((config) => {
@@ -75,7 +75,7 @@ export default function ChatWidget() {
 
     if (savedTenantId) setTenantId(savedTenantId);
 
-    if (savedUser && savedChatId) {
+    if (savedUser && savedChatId && savedChatId !== "undefined" && savedChatId !== "") {
       setUserInfo(JSON.parse(savedUser));
       setChatId(savedChatId);
       setIsRegistered(true);
@@ -83,6 +83,40 @@ export default function ChatWidget() {
 
       // Join chat room on reconnect
       s.emit("join_chat", { chatId: savedChatId });
+    } else if (savedUser && (!savedChatId || savedChatId === "undefined" || savedChatId === "")) {
+      // Auto-repair old/broken local sessions by registering with LeadBridge IA backend
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUserInfo(parsedUser);
+        fetch(`${BACKEND_URL}/api/leads`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: AGENT_TOKEN,
+            name: parsedUser.name,
+            email: parsedUser.email,
+            phone: parsedUser.phone,
+            sourceDomain: typeof window !== "undefined" ? window.location.hostname : "esmeralddetailing.com",
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            const newChatId = data.chatId || data.chat?.id || data.id || "";
+            const newTenantId = data.tenantId || data.chat?.tenantId || "";
+            if (newChatId) {
+              setChatId(newChatId);
+              setIsRegistered(true);
+              setUnread(false);
+              if (newTenantId) setTenantId(newTenantId);
+              localStorage.setItem("esmerald_chat_id", newChatId);
+              if (newTenantId) localStorage.setItem("esmerald_chat_tenant_id", newTenantId);
+              s.emit("join_chat", { chatId: newChatId });
+            }
+          })
+          .catch(console.warn);
+      } catch (e) {
+        console.warn("User parse error:", e);
+      }
     }
 
     if (savedMessages) {
@@ -158,14 +192,18 @@ export default function ChatWidget() {
 
       if (res.ok) {
         const data = await res.json();
-        if (data.chat?.id) {
-          activeChatId = data.chat.id;
-          activeTenantId = data.chat.tenantId || activeTenantId;
+        // Support both API response formats: { chatId: "..." } and { chat: { id: "..." } }
+        const extractedChatId = data.chatId || data.chat?.id || data.id || "";
+        const extractedTenantId = data.tenantId || data.chat?.tenantId || activeTenantId;
+
+        if (extractedChatId) {
+          activeChatId = extractedChatId;
+          activeTenantId = extractedTenantId;
           setChatId(activeChatId);
-          setTenantId(activeTenantId);
+          if (activeTenantId) setTenantId(activeTenantId);
 
           localStorage.setItem("esmerald_chat_id", activeChatId);
-          localStorage.setItem("esmerald_chat_tenant_id", activeTenantId);
+          if (activeTenantId) localStorage.setItem("esmerald_chat_tenant_id", activeTenantId);
 
           if (socket) {
             socket.emit("join_chat", { chatId: activeChatId });
@@ -173,7 +211,7 @@ export default function ChatWidget() {
         }
       }
     } catch (err) {
-      console.warn("LeadBridge session start fallback to local session:", err);
+      console.warn("LeadBridge session start notice:", err);
     }
 
     localStorage.setItem("esmerald_chat_user", JSON.stringify(userInfo));
@@ -262,6 +300,9 @@ export default function ChatWidget() {
   const handleSendMessage = (textToSend: string) => {
     if (!textToSend.trim()) return;
 
+    const currentChatId = chatId || localStorage.getItem("esmerald_chat_id") || "";
+    const currentTenantId = tenantId || localStorage.getItem("esmerald_chat_tenant_id") || "";
+
     // 1. Add user message locally
     const userMsgId = `user-${Date.now()}`;
     const userMsg: Message = {
@@ -275,19 +316,20 @@ export default function ChatWidget() {
     setInputText("");
     setIsTyping(true);
 
-    // 2. Send via Socket if connected and registered
-    if (socket && chatId) {
+    // 2. Send via Socket if connected and registered with LeadBridge
+    if (socket && socket.connected && currentChatId) {
       socket.emit("send_message", {
-        chatId: chatId,
-        tenantId: tenantId,
+        chatId: currentChatId,
+        tenantId: currentTenantId,
         senderType: "LEAD",
         content: textToSend,
       });
 
-      // Fallback timer in case backend response takes too long or fails
+      // Increased timeout to 20 seconds so AI backend has time to process and respond
       const fallbackTimer = setTimeout(() => {
         setIsTyping((currentlyTyping) => {
           if (currentlyTyping) {
+            console.warn("AI response timeout, using fallback response.");
             const fallback = getFallbackBotResponse(textToSend);
             const botMsg: Message = {
               id: `agent-fallback-${Date.now()}`,
@@ -300,7 +342,7 @@ export default function ChatWidget() {
           }
           return false;
         });
-      }, 5000);
+      }, 20000);
 
       return () => clearTimeout(fallbackTimer);
     } else {
@@ -320,17 +362,20 @@ export default function ChatWidget() {
   };
 
   const handleEndChatSession = () => {
-    if (chatId) {
+    const currentChatId = chatId || localStorage.getItem("esmerald_chat_id") || "";
+    const currentTenantId = tenantId || localStorage.getItem("esmerald_chat_tenant_id") || "";
+
+    if (currentChatId) {
       // 1. Send close event via WebSocket
       if (socket && socket.connected) {
         socket.emit("close_chat", {
-          chatId: chatId,
-          tenantId: tenantId,
+          chatId: currentChatId,
+          tenantId: currentTenantId,
           closedBy: "Lead",
         });
       } else {
         // Fallback HTTP POST
-        fetch(`${BACKEND_URL}/api/chats/${chatId}/close`, {
+        fetch(`${BACKEND_URL}/api/chats/${currentChatId}/close`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         }).catch((err) => console.warn("Error closing chat via API:", err));
