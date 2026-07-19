@@ -129,6 +129,31 @@
   margin: 1px 0 0 0;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.endChatHeaderBtn {
+  background: #f4f4f5;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-body), sans-serif;
+}
+
+.endChatHeaderBtn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
 .closeButton {
   background: transparent;
   border: none;

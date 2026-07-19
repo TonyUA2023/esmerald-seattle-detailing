@@ -4,7 +4,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Send, X } from "lucide-react";
+import { io, Socket } from "socket.io-client";
 import styles from "./ChatWidget.module.css";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_LB_BACKEND_URL || "http://t10868f0sd4tlemfrh4oo82q.213.199.42.255.sslip.io";
+const AGENT_TOKEN = process.env.NEXT_PUBLIC_LB_AGENT_TOKEN || "LB_AGENT_9awy10n8";
 
 interface Message {
   id: string;
@@ -29,23 +33,92 @@ export default function ChatWidget() {
   const [unread, setUnread] = useState(true);
   const [mounted, setMounted] = useState(false);
 
+  // LeadBridge IA Backend state
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [tenantId, setTenantId] = useState<string>("");
+  const [chatId, setChatId] = useState<string>("");
+  const [botName, setBotName] = useState<string>("Fernando");
+  const [agentName, setAgentName] = useState<string>("Fernando - Esmerald Detailing");
+  const [businessName, setBusinessName] = useState<string>("Esmerald Detailing");
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize and load state from localStorage (only on client mount to prevent SSR mismatch)
+  // 1. Fetch Agent Token Config & Initialize Socket
   useEffect(() => {
     setMounted(true);
+
+    // Fetch agent config from LeadBridge IA API
+    if (AGENT_TOKEN && AGENT_TOKEN !== "YOUR_LB_AGENT_TOKEN_HERE") {
+      fetch(`${BACKEND_URL}/api/widget/token/${AGENT_TOKEN}`)
+        .then((res) => res.json())
+        .then((config) => {
+          if (config.tenantId) setTenantId(config.tenantId);
+          if (config.botName) setBotName(config.botName);
+          if (config.agentName) setAgentName(config.agentName);
+          if (config.businessName) setBusinessName(config.businessName);
+        })
+        .catch((err) => console.warn("LeadBridge config fetch notice:", err));
+    }
+
+    // Connect socket.io
+    const s = io(BACKEND_URL, {
+      transports: ["websocket", "polling"],
+      autoConnect: true,
+    });
+    setSocket(s);
+
+    // Load saved localStorage data
     const savedUser = localStorage.getItem("esmerald_chat_user");
     const savedMessages = localStorage.getItem("esmerald_chat_messages");
-    
-    if (savedUser) {
+    const savedChatId = localStorage.getItem("esmerald_chat_id");
+    const savedTenantId = localStorage.getItem("esmerald_chat_tenant_id");
+
+    if (savedTenantId) setTenantId(savedTenantId);
+
+    if (savedUser && savedChatId) {
       setUserInfo(JSON.parse(savedUser));
+      setChatId(savedChatId);
       setIsRegistered(true);
-      setUnread(false); // already initiated in the past
+      setUnread(false);
+
+      // Join chat room on reconnect
+      s.emit("join_chat", { chatId: savedChatId });
     }
-    
+
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     }
+
+    // Socket message listener for AI & Human responses
+    s.on("new_message", (msg: { id?: string; chatId?: string; senderType: "AI" | "WORKER" | "LEAD"; content: string; createdAt?: string }) => {
+      if (msg.senderType === "AI" || msg.senderType === "WORKER") {
+        setIsTyping(false);
+        const newMsg: Message = {
+          id: msg.id || `msg-${Date.now()}`,
+          sender: "agent",
+          text: msg.content,
+          timestamp: msg.createdAt
+            ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === newMsg.id || (m.text === newMsg.text && m.sender === "agent"))) {
+            return prev;
+          }
+          return [...prev, newMsg];
+        });
+      }
+    });
+
+    // Listen for chat closed event from server
+    s.on("chat_closed", () => {
+      setIsTyping(false);
+    });
+
+    return () => {
+      s.disconnect();
+    };
   }, []);
 
   // Save messages to localStorage whenever they change
@@ -62,9 +135,46 @@ export default function ChatWidget() {
 
   if (!mounted) return null;
 
-  const handleStartChat = (e: React.FormEvent) => {
+  const handleStartChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInfo.name.trim() || !userInfo.email.trim() || !userInfo.phone.trim()) return;
+
+    let activeTenantId = tenantId;
+    let activeChatId = "";
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/leads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tenantId: activeTenantId || undefined,
+          token: AGENT_TOKEN,
+          name: userInfo.name,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          sourceDomain: typeof window !== "undefined" ? window.location.hostname : "esmeralddetailing.com",
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.chat?.id) {
+          activeChatId = data.chat.id;
+          activeTenantId = data.chat.tenantId || activeTenantId;
+          setChatId(activeChatId);
+          setTenantId(activeTenantId);
+
+          localStorage.setItem("esmerald_chat_id", activeChatId);
+          localStorage.setItem("esmerald_chat_tenant_id", activeTenantId);
+
+          if (socket) {
+            socket.emit("join_chat", { chatId: activeChatId });
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("LeadBridge session start fallback to local session:", err);
+    }
 
     localStorage.setItem("esmerald_chat_user", JSON.stringify(userInfo));
     setIsRegistered(true);
@@ -74,14 +184,14 @@ export default function ChatWidget() {
     const initialGreeting: Message = {
       id: "init-1",
       sender: "agent",
-      text: `Hello ${userInfo.name}. Welcome to Esmerald Mobile Detailing. My name is Fernando. How can we help you today?`,
+      text: `Hello ${userInfo.name}. Welcome to ${businessName}. My name is ${botName}. How can we help you today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages([initialGreeting]);
   };
 
-  const getBotResponse = (userInput: string): { text: string; replies: string[] } => {
+  const getFallbackBotResponse = (userInput: string): { text: string; replies: string[] } => {
     const text = userInput.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
     if (
@@ -94,13 +204,7 @@ export default function ChatWidget() {
       text.includes("detail")
     ) {
       return {
-        text: `We offer three signature detailing packages brought directly to your location:
-
-1. Full Mobile Detail (From $299): The ultimate package featuring deep interior sanitization & complete exterior wash.
-2. Exterior Correction (From $149): Paint decontamination, swirl removal, and premium sealant.
-3. Interior Deep Clean (From $179): Deep carpet steam cleaning, seat extraction, and leather conditioning.
-
-Would you like a custom quote for one of these, ${userInfo.name}?`,
+        text: `We offer three signature detailing packages brought directly to your location:\n\n1. Full Mobile Detail (From $299): The ultimate package featuring deep interior sanitization & complete exterior wash.\n2. Exterior Correction (From $149): Paint decontamination, swirl removal, and premium sealant.\n3. Interior Deep Clean (From $179): Deep carpet steam cleaning, seat extraction, and leather conditioning.\n\nWould you like a custom quote for one of these, ${userInfo.name}?`,
         replies: ["Book Appointment", "Service Area", "Talk to Specialist"]
       };
     }
@@ -112,9 +216,7 @@ Would you like a custom quote for one of these, ${userInfo.name}?`,
       text.includes("reserve")
     ) {
       return {
-        text: `Great choice. To book, you can fill out our quick quote form on the website, or I can have Fernando contact you at **${userInfo.phone}** to schedule the date and time.
-
-Would you like us to call you now?`,
+        text: `Great choice. To book, you can fill out our quick quote form on the website, or I can have ${botName} contact you at **${userInfo.phone}** to schedule the date and time.\n\nWould you like us to call you now?`,
         replies: ["Yes, call me", "Have another question", "Main Menu"]
       };
     }
@@ -131,21 +233,8 @@ Would you like us to call you now?`,
       text.includes("where")
     ) {
       return {
-        text: `We are a 100% mobile and self-contained detailing unit. We bring our own pure water and power. We service Seattle, Bellevue, Kirkland, Redmond, Renton, Tacoma, and surrounding areas.
-
-Which city is your vehicle located in?`,
+        text: `We are a 100% mobile and self-contained detailing unit. We bring our own pure water and power. We service Seattle, Bellevue, Kirkland, Redmond, Renton, Tacoma, and surrounding areas.\n\nWhich city is your vehicle located in?`,
         replies: ["Seattle", "Bellevue / Eastside", "View Packages"]
-      };
-    }
-
-    if (
-      text.includes("seattle") || 
-      text.includes("bellevue") || 
-      text.includes("eastside")
-    ) {
-      return {
-        text: `Excellent. We service your area with no travel fees. Which detailing package are you interested in booking at your location?`,
-        replies: ["Full Mobile Detail", "Interior Deep Clean", "Get Custom Quote"]
       };
     }
 
@@ -154,61 +243,18 @@ Which city is your vehicle located in?`,
       text.includes("human") || 
       text.includes("person") || 
       text.includes("contact") || 
-      text.includes("fernando") || 
       text.includes("talk") ||
       text.includes("chat")
     ) {
       return {
-        text: `Got it, ${userInfo.name}. I have sent a priority alert to Fernando with your phone **${userInfo.phone}** and email **${userInfo.email}**.
-
-He will call or text you in less than 10 minutes. Are there any vehicle details you'd like to share in the meantime? (e.g. Year, Make, Model, or condition)`,
+        text: `Got it, ${userInfo.name}. I have sent a priority alert to our team with your phone **${userInfo.phone}** and email **${userInfo.email}**.\n\nWe will call or text you in less than 10 minutes. Are there any vehicle details you'd like to share in the meantime? (e.g. Year, Make, Model, or condition)`,
         replies: ["Thank you", "Main Menu"]
-      };
-    }
-
-    if (
-      text.includes("yes, call me") || 
-      text.includes("call me") || 
-      text.includes("phone call")
-    ) {
-      return {
-        text: `Perfect. Fernando has received your details. He will call you at **${userInfo.phone}** shortly. Thank you for choosing Esmerald Mobile Detailing!`,
-        replies: ["Awesome", "Main Menu"]
-      };
-    }
-
-    if (
-      text.includes("thank you") || 
-      text.includes("thanks") || 
-      text.includes("ok") || 
-      text.includes("perfect") || 
-      text.includes("awesome")
-    ) {
-      return {
-        text: `You are very welcome. If you need anything else, just let me know. Have a wonderful day and drive clean.`,
-        replies: ["View Packages", "Main Menu"]
-      };
-    }
-
-    if (
-      text.includes("menu") || 
-      text.includes("start") || 
-      text.includes("home") || 
-      text.includes("hello") || 
-      text.includes("hi") || 
-      text.includes("hey")
-    ) {
-      return {
-        text: `Hello again, ${userInfo.name}. How can we help you today? Choose a quick option below or type your question.`,
-        replies: ["View Prices", "Book Appointment", "Talk to Specialist", "Service Area"]
       };
     }
 
     // Default Fallback Response
     return {
-      text: `I have received your message, ${userInfo.name}. I have forwarded your inquiry to our detailing team in Seattle. We will reply to your email **${userInfo.email}** or call you at **${userInfo.phone}** as soon as possible.
-
-Would you like to try one of these quick options in the meantime?`,
+      text: `I have received your message, ${userInfo.name}. I have forwarded your inquiry to our detailing team in Seattle. We will reply to your email **${userInfo.email}** or call you at **${userInfo.phone}** as soon as possible.\n\nWould you like to try one of these quick options in the meantime?`,
       replies: ["View Prices", "Book Appointment", "Service Area"]
     };
   };
@@ -216,9 +262,10 @@ Would you like to try one of these quick options in the meantime?`,
   const handleSendMessage = (textToSend: string) => {
     if (!textToSend.trim()) return;
 
-    // 1. Add user message
+    // 1. Add user message locally
+    const userMsgId = `user-${Date.now()}`;
     const userMsg: Message = {
-      id: `user-${Date.now()}`,
+      id: userMsgId,
       sender: "user",
       text: textToSend,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -228,39 +275,88 @@ Would you like to try one of these quick options in the meantime?`,
     setInputText("");
     setIsTyping(true);
 
-    // 2. Simulate bot typing and responding
-    setTimeout(() => {
-      const botResult = getBotResponse(textToSend);
-      const botMsg: Message = {
-        id: `agent-${Date.now()}`,
-        sender: "agent",
-        text: botResult.text,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
+    // 2. Send via Socket if connected and registered
+    if (socket && chatId) {
+      socket.emit("send_message", {
+        chatId: chatId,
+        tenantId: tenantId,
+        senderType: "LEAD",
+        content: textToSend,
+      });
 
-      setMessages((prev) => [...prev, botMsg]);
-      setIsTyping(false);
-    }, 1200);
+      // Fallback timer in case backend response takes too long or fails
+      const fallbackTimer = setTimeout(() => {
+        setIsTyping((currentlyTyping) => {
+          if (currentlyTyping) {
+            const fallback = getFallbackBotResponse(textToSend);
+            const botMsg: Message = {
+              id: `agent-fallback-${Date.now()}`,
+              sender: "agent",
+              text: fallback.text,
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            };
+            setMessages((prev) => [...prev, botMsg]);
+            return false;
+          }
+          return false;
+        });
+      }, 5000);
+
+      return () => clearTimeout(fallbackTimer);
+    } else {
+      // Offline / Simulated response fallback
+      setTimeout(() => {
+        const botResult = getFallbackBotResponse(textToSend);
+        const botMsg: Message = {
+          id: `agent-${Date.now()}`,
+          sender: "agent",
+          text: botResult.text,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages((prev) => [...prev, botMsg]);
+        setIsTyping(false);
+      }, 1200);
+    }
   };
 
-  // Helper to clear local storage and reset chat (for testing/easy restart)
-  const handleResetChat = () => {
+  const handleEndChatSession = () => {
+    if (chatId) {
+      // 1. Send close event via WebSocket
+      if (socket && socket.connected) {
+        socket.emit("close_chat", {
+          chatId: chatId,
+          tenantId: tenantId,
+          closedBy: "Lead",
+        });
+      } else {
+        // Fallback HTTP POST
+        fetch(`${BACKEND_URL}/api/chats/${chatId}/close`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }).catch((err) => console.warn("Error closing chat via API:", err));
+      }
+    }
+
+    // 2. Clear local session data & localStorage
     localStorage.removeItem("esmerald_chat_user");
     localStorage.removeItem("esmerald_chat_messages");
+    localStorage.removeItem("esmerald_chat_id");
+    localStorage.removeItem("esmerald_chat_tenant_id");
+
     setUserInfo({ name: "", email: "", phone: "" });
     setMessages([]);
+    setChatId("");
     setIsRegistered(false);
   };
 
   const currentQuickReplies = (): string[] => {
     if (messages.length === 0) return [];
     
-    // Check the last message's sender and matches to provide context-appropriate quick replies
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.sender === "user" || isTyping) return [];
 
-    const botResult = getBotResponse(lastMsg.text);
-    return botResult.replies;
+    const botResult = getFallbackBotResponse(lastMsg.text);
+    return botResult.replies || ["View Prices", "Book Appointment", "Service Area"];
   };
 
   return (
@@ -298,20 +394,31 @@ Would you like to try one of these quick options in the meantime?`,
             <div className={styles.chatHeader}>
               <div className={styles.agentInfo}>
                 <div className={styles.avatarWrapper}>
-                  <div className={styles.avatar}>E</div>
+                  <div className={styles.avatar}>{botName.charAt(0) || "F"}</div>
                 </div>
                 <div className={styles.agentDetails}>
-                  <h3>Fernando - Esmerald Detailing</h3>
+                  <h3>{agentName}</h3>
                   <p>Online • Replies instantly</p>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsOpen(false)} 
-                className={styles.closeButton}
-                aria-label="Close chat"
-              >
-                <X size={18} />
-              </button>
+              <div className={styles.headerActions}>
+                {isRegistered && (
+                  <button
+                    onClick={handleEndChatSession}
+                    className={styles.endChatHeaderBtn}
+                    title="End chat session and open room for other leads"
+                  >
+                    End Chat
+                  </button>
+                )}
+                <button 
+                  onClick={() => setIsOpen(false)} 
+                  className={styles.closeButton}
+                  aria-label="Close chat window"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             {/* Pre-chat Form */}
@@ -378,7 +485,7 @@ Would you like to try one of these quick options in the meantime?`,
                         ))}
                       </div>
                       <div className={styles.metaInfo}>
-                        <span>{msg.sender === "user" ? "You" : "Fernando"}</span>
+                        <span>{msg.sender === "user" ? "You" : botName}</span>
                         <span>•</span>
                         <span>{msg.timestamp}</span>
                       </div>
@@ -436,13 +543,13 @@ Would you like to try one of these quick options in the meantime?`,
                   </button>
                 </form>
 
-                {/* Reset button (visible but subtle) for debug/restart */}
+                {/* End Chat option footer */}
                 <div className={styles.resetContainer}>
                   <button 
-                    onClick={handleResetChat} 
+                    onClick={handleEndChatSession} 
                     className={styles.resetBtn}
                   >
-                    Reset chat session
+                    End & Close Chat Session
                   </button>
                 </div>
               </>

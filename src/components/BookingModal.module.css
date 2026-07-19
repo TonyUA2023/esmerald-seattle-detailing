@@ -1347,6 +1347,9 @@
 @media (max-width: 768px) {
   .modalOverlay {
     padding: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
   }
   
   .backdrop {
@@ -1354,15 +1357,20 @@
   }
   
   .modalWrapper {
-    width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
     border: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   
   .modalHeader {
-    padding: 1rem 1.25rem;
+    padding: max(0.85rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) 0.85rem max(1.25rem, env(safe-area-inset-left));
+    flex-shrink: 0;
   }
   
   .brandSubtitle {
@@ -1371,7 +1379,17 @@
   
   .modalBodyGrid {
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+  
+  .mainFlowContainer {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   
   .sidebarSummary {
@@ -1380,6 +1398,7 @@
   
   .stepProgressContainer {
     padding: 1rem 1.25rem;
+    flex-shrink: 0;
   }
   
   .progressTrack {
@@ -1400,6 +1419,10 @@
   
   .stepContentScroll {
     padding: 1.25rem;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Step 1 styling collapse for mobile */
@@ -1556,9 +1579,11 @@
   
   /* Sticky footer bottom control navigation */
   .flowNavButtons {
-    padding: 1rem 1.25rem;
+    padding: 0.85rem max(1.25rem, env(safe-area-inset-right)) max(0.85rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
     border-top: 1px solid var(--color-border);
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+    background: #FFFFFF;
   }
   
   .backBtn, .primaryBtn {
@@ -1567,7 +1592,10 @@
   }
 
   .successScreen {
-    padding: 2rem 1.25rem;
+    padding: max(2rem, env(safe-area-inset-top)) 1.25rem max(2rem, env(safe-area-inset-bottom)) 1.25rem;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
   }
 }
 
