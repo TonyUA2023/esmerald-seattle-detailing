@@ -47,9 +47,9 @@ export default function ChatWidget() {
   useEffect(() => {
     setMounted(true);
 
-    // Fetch agent config from LeadBridge IA API
+    // Fetch agent config via Next.js API proxy to avoid Mixed Content (HTTPS -> HTTP) blocking
     if (AGENT_TOKEN) {
-      fetch(`${BACKEND_URL}/api/widget/token/${AGENT_TOKEN}`)
+      fetch(`/api/leadbridge/token/${AGENT_TOKEN}`)
         .then((res) => res.json())
         .then((config) => {
           if (config.tenantId) setTenantId(config.tenantId);
@@ -57,7 +57,7 @@ export default function ChatWidget() {
           if (config.agentName) setAgentName(config.agentName);
           if (config.businessName) setBusinessName(config.businessName);
         })
-        .catch((err) => console.warn("LeadBridge config fetch notice:", err));
+        .catch((err) => console.warn("LeadBridge config proxy fetch notice:", err));
     }
 
     // Connect socket.io
@@ -84,11 +84,11 @@ export default function ChatWidget() {
       // Join chat room on reconnect
       s.emit("join_chat", { chatId: savedChatId });
     } else if (savedUser && (!savedChatId || savedChatId === "undefined" || savedChatId === "")) {
-      // Auto-repair old/broken local sessions by registering with LeadBridge IA backend
+      // Auto-repair old/broken local sessions by registering via Next.js API proxy
       try {
         const parsedUser = JSON.parse(savedUser);
         setUserInfo(parsedUser);
-        fetch(`${BACKEND_URL}/api/leads`, {
+        fetch(`/api/leadbridge/leads`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -177,7 +177,7 @@ export default function ChatWidget() {
     let activeChatId = "";
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/leads`, {
+      const res = await fetch(`/api/leadbridge/leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -192,7 +192,6 @@ export default function ChatWidget() {
 
       if (res.ok) {
         const data = await res.json();
-        // Support both API response formats: { chatId: "..." } and { chat: { id: "..." } }
         const extractedChatId = data.chatId || data.chat?.id || data.id || "";
         const extractedTenantId = data.tenantId || data.chat?.tenantId || activeTenantId;
 
@@ -325,7 +324,7 @@ export default function ChatWidget() {
         content: textToSend,
       });
 
-      // Increased timeout to 20 seconds so AI backend has time to process and respond
+      // Timeout fallback in case WebSocket is blocked by browser mixed content policy
       const fallbackTimer = setTimeout(() => {
         setIsTyping((currentlyTyping) => {
           if (currentlyTyping) {
@@ -342,7 +341,7 @@ export default function ChatWidget() {
           }
           return false;
         });
-      }, 20000);
+      }, 15000);
 
       return () => clearTimeout(fallbackTimer);
     } else {
@@ -374,8 +373,8 @@ export default function ChatWidget() {
           closedBy: "Lead",
         });
       } else {
-        // Fallback HTTP POST
-        fetch(`${BACKEND_URL}/api/chats/${currentChatId}/close`, {
+        // Fallback HTTP POST via proxy
+        fetch(`/api/leadbridge/chats/${currentChatId}/close`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         }).catch((err) => console.warn("Error closing chat via API:", err));
