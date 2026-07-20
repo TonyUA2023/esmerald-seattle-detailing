@@ -28,7 +28,7 @@
       "truckVan": 360
     },
     "duration": "5 - 7 Hours",
-    "image": "/gallery_1.png",
+    "image": "/imagenes/18.png",
     "tag": "Featured / Full Restoration"
   },
   {
@@ -50,7 +50,7 @@
       "truckVan": 265
     },
     "duration": "3 - 4 Hours",
-    "image": "/service_interior.png",
+    "image": "/imagenes/31.png",
     "tag": "Popular / Interior Focus"
   },
   {
@@ -72,7 +72,7 @@
       "truckVan": 180
     },
     "duration": "2 - 3 Hours",
-    "image": "/service_wash.png",
+    "image": "/imagenes/34.png",
     "tag": "Exterior Protection"
   }
 ]

@@ -1,0 +1,241 @@
+.footer {
+  background-color: #0A1428;
+  color: #ffffff;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.footerCtaBand {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3rem 2rem;
+}
+
+.footerCtaInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.footerCtaHeadline {
+  font-family: var(--font-title);
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.footerCtaHeadline span {
+  color: #10B981;
+}
+
+.footerCtaBtn {
+  background: #10B981;
+  color: #FFFFFF;
+  padding: 0.85rem 2rem;
+  border-radius: 50px;
+  border: none;
+  font-family: var(--font-title);
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.footerCtaBtn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+
+.footerMain {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 2rem 3rem;
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr;
+  gap: 4rem;
+}
+
+.footerBrand {}
+
+.footerLogoContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.footerLogoImage {
+  width: auto;
+  height: 48px;
+}
+
+.footerLogoText {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.footerLogoText span {
+  color: #10B981;
+}
+
+.footerDesc {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  max-width: 340px;
+}
+
+.footerContact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.footerContactItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footerContactItem svg {
+  color: #10B981;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.footerContactItem:hover {
+  color: #ffffff;
+}
+
+.footerCol {}
+
+.footerColTitle {
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.25rem;
+}
+
+.footerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.footerList li {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footerList a {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.footerList a:hover {
+  color: #10B981;
+}
+
+.footerBottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem 2rem;
+}
+
+.footerBottomInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footerBottomLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footerBottomLinks a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footerBottomLinks a:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .footerCtaBand {
+    padding: 2rem 1.25rem;
+  }
+
+  .footerCtaInner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+  }
+
+  .footerCtaBtn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .footerMain {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 3rem 1.25rem 2rem;
+  }
+
+  .footerDesc {
+    max-width: 100%;
+  }
+
+  .footerBottom {
+    padding: 1.25rem;
+  }
+
+  .footerBottomInner {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}

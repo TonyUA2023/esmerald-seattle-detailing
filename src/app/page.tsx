@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Clock, Shield, CheckCircle2, Star, MapPin, Mail, Phone, MessageSquare, Droplets, Sparkles, Car, Menu, X, Check, Maximize, DoorOpen, Disc, Wind, Layers, Home as HomeIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -10,6 +11,9 @@ import styles from './page.module.css';
 import dynamic from 'next/dynamic';
 import servicesData from '@/data/services.json';
 import addonsData from '@/data/addons.json';
+
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const MapComponent = dynamic(() => import('@/components/MapComponent'), { ssr: false });
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
@@ -76,47 +80,7 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      {/* HEADER */}
-      <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''} ${menuOpen ? styles.headerMenuOpen : ''}`}>
-        <div className={styles.headerContainer}>
-          {/* Logo on the left */}
-          <div className={styles.logo} onClick={() => scrollTo('hero')} title="Esmerald Apex Mobile Detailing">
-            <Image 
-              src="/logo/logo.png" 
-              alt="Esmerald Apex Mobile Detailing Logo" 
-              width={44} 
-              height={44} 
-              className={styles.headerLogoImage}
-              priority
-            />
-            <span className={styles.headerLogoText}>
-              Esmerald<span>Apex</span>
-            </span>
-          </div>
-
-          {/* Navigation & CTA on the right */}
-          <div className={styles.headerRight}>
-            <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
-              <a onClick={() => { scrollTo('hero'); setMenuOpen(false); }}>Home</a>
-              <a onClick={() => { scrollTo('services'); setMenuOpen(false); }}>Services</a>
-              <a onClick={() => { scrollTo('map'); setMenuOpen(false); }}>Locations</a>
-              <a href="sms:+17747477215" onClick={() => setMenuOpen(false)} className={styles.mobileNavSmsLink}>
-                <MessageSquare size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                <span>Text: (774) 747-7215</span>
-              </a>
-              <button onClick={() => { openBooking(); setMenuOpen(false); }} className={styles.mobileNavButton}>Book Now</button>
-            </nav>
-            <a href="sms:+17747477215" className={styles.headerSmsButton} title="Send us an SMS text message">
-              <MessageSquare size={14} />
-              <span>SMS: (774) 747-7215</span>
-            </a>
-            <button onClick={() => openBooking()} className={styles.headerDesktopButton}>Book Now</button>
-            <button className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation menu">
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header onOpenBooking={() => openBooking()} />
 
       {/* 1. HERO SECTION */}
       <section id="hero" className={styles.hero}>
@@ -236,7 +200,7 @@ export default function Home() {
             <div className={styles.fleetDecorativeCorner}></div>
             <div className={styles.fleetImageWrapper}>
               <Image 
-                src="/esmerald_van.png" 
+                src="/detailing_van.png" 
                 alt="Esmerald Mobile Detailing Van" 
                 fill
                 style={{ objectFit: 'cover' }}
@@ -283,7 +247,7 @@ export default function Home() {
             {/* Left side: Visual card & highlights */}
             <div className={styles.sigDetailVisuals}>
               <div className={styles.sigDetailImageWrapper}>
-                <Image src="/gallery_1.png" alt="Premium Mobile Detailing Result" fill style={{ objectFit: 'cover' }} />
+                <Image src="/imagenes/18.png" alt="Premium Mobile Detailing Result" fill style={{ objectFit: 'cover' }} />
                 <div className={styles.sigDetailBadge}>
                   <Sparkles size={16} />
                   <span>Showroom Shine Guarantee</span>
@@ -386,7 +350,7 @@ export default function Home() {
             <div className={styles.additionalCard}>
               <div className={styles.additionalCardImageWrapper}>
                 <Image 
-                  src="/service_interior.png" 
+                  src="/imagenes/31.png" 
                   alt="Signature Interior Detail" 
                   fill 
                   style={{ objectFit: 'cover' }}
@@ -437,7 +401,7 @@ export default function Home() {
             <div className={styles.additionalCard}>
               <div className={styles.additionalCardImageWrapper}>
                 <Image 
-                  src="/service_wash.png" 
+                  src="/imagenes/23.png" 
                   alt="Signature Exterior Detail" 
                   fill 
                   style={{ objectFit: 'cover' }}
@@ -628,7 +592,7 @@ export default function Home() {
           </div>
           
           <div className={styles.excellenceImageWrapper}>
-            <Image src="/service_wash.png" alt="Excellence in Detailing" fill style={{ objectFit: 'cover' }} />
+            <Image src="/imagenes/34.png" alt="Excellence in Detailing" fill style={{ objectFit: 'cover' }} />
           </div>
         </div>
       </section>
@@ -643,25 +607,29 @@ export default function Home() {
         
         <div className={styles.galleryGrid}>
           <div className={styles.galleryCard}>
-            <Image src="/gallery_1.png" alt="Showroom Shine" fill style={{ objectFit: 'cover' }} />
-            <div className={styles.galleryCardLabel}>Showroom Shine</div>
+            <Image src="/imagenes/34.png" alt="Exterior Perfection" fill style={{ objectFit: 'cover' }} />
+            <div className={styles.galleryCardLabel}>Exterior Perfection</div>
           </div>
           <div className={styles.galleryCard}>
-            <Image src="/gallery_3.png" alt="Deep Interior" fill style={{ objectFit: 'cover' }} />
-            <div className={styles.galleryCardLabel}>Deep Interior</div>
+            <Image src="/imagenes/18.png" alt="Ceramic Coating Shield" fill style={{ objectFit: 'cover' }} />
+            <div className={styles.galleryCardLabel}>Ceramic Shield</div>
           </div>
           <div className={styles.galleryCard}>
-            <Image src="/gallery_2.png" alt="Ceramic Coating" fill style={{ objectFit: 'cover' }} />
-            <div className={styles.galleryCardLabel}>Ceramic Coating</div>
+            <Image src="/imagenes/31.png" alt="Deep Interior Steam" fill style={{ objectFit: 'cover' }} />
+            <div className={styles.galleryCardLabel}>Deep Interior Steam</div>
+          </div>
+          <div className={styles.galleryCard}>
+            <Image src="/imagenes/12.png" alt="Paint Gloss Correction" fill style={{ objectFit: 'cover' }} />
+            <div className={styles.galleryCardLabel}>Paint Correction</div>
           </div>
         </div>
 
         <span className={styles.swipeHint}>← swipe gallery →</span>
 
         <div style={{ textAlign: 'center', marginTop: '2rem', padding: '0 1.5rem' }}>
-          <button onClick={() => scrollTo('booking')} className={styles.galleryBtnOutline}>
-            View All Gallery
-          </button>
+          <Link href="/gallery" className={styles.galleryBtnOutline}>
+            View Full Gallery
+          </Link>
         </div>
       </section>
 
@@ -863,81 +831,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 10. FOOTER */}
-      <footer className={styles.footer}>
-        {/* Main footer grid */}
-        <div className={styles.footerMain}>
-          {/* Brand col */}
-          <div className={styles.footerBrand}>
-            <div className={styles.footerLogoContainer} onClick={() => scrollTo('hero')}>
-              <Image 
-                src="/logo/logo.png" 
-                alt="Esmerald Apex Mobile Detailing Logo" 
-                width={48} 
-                height={48} 
-                className={styles.footerLogoImage}
-              />
-              <span className={styles.footerLogoText}>
-                Esmerald<span>Apex</span>
-              </span>
-            </div>
-            <p className={styles.footerDesc}>
-              Seattle&apos;s premier mobile car detailing service. Hand car wash, ceramic coating & interior detailing — brought to your home or office.
-            </p>
-            {/* Contact info */}
-            <div className={styles.footerContact}>
-              <a href="tel:+17747477215" className={styles.footerContactItem}>
-                <Phone size={14} />
-                <span>(774) 747-7215</span>
-              </a>
-              <a href="mailto:customer@esmeraldseattledetail.com" className={styles.footerContactItem}>
-                <Mail size={14} />
-                <span>customer@esmeraldseattledetail.com</span>
-              </a>
-              <div className={styles.footerContactItem}>
-                <MapPin size={14} />
-                <span>Seattle, WA & Eastside</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Services col */}
-          <div className={styles.footerCol}>
-            <h4 className={styles.footerColTitle}>Services</h4>
-            <ul className={styles.footerList}>
-              <li><a onClick={() => scrollTo('services')}>Full Mobile Detail</a></li>
-              <li><a onClick={() => scrollTo('services')}>Exterior Correction</a></li>
-              <li><a onClick={() => scrollTo('services')}>Interior Deep Clean</a></li>
-              <li><a onClick={() => scrollTo('services')}>Ceramic Coating</a></li>
-              <li><a onClick={() => scrollTo('services')}>Hand Car Wash</a></li>
-            </ul>
-          </div>
-
-          {/* Service Area col */}
-          <div className={styles.footerCol}>
-            <h4 className={styles.footerColTitle}>Service Area</h4>
-            <ul className={styles.footerList}>
-              <li><a onClick={() => scrollTo('map')}>Seattle</a></li>
-              <li><a onClick={() => scrollTo('map')}>Bellevue</a></li>
-              <li><a onClick={() => scrollTo('map')}>Kirkland</a></li>
-              <li><a onClick={() => scrollTo('map')}>Redmond</a></li>
-              <li><a onClick={() => scrollTo('map')}>Renton &amp; Tacoma</a></li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className={styles.footerBottom}>
-          <div className={styles.footerBottomInner}>
-            <p>© {new Date().getFullYear()} Esmerald Apex Mobile Detailing. All rights reserved.</p>
-            <div className={styles.footerBottomLinks}>
-              <a href="#">Privacy Policy</a>
-              <span>·</span>
-              <a href="#">Terms of Service</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer onOpenBooking={() => openBooking()} />
 
       <BookingModal 
         isOpen={isBookingOpen} 

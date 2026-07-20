@@ -146,6 +146,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: var(--font-body), sans-serif;
+  white-space: nowrap;
 }
 
 .endChatHeaderBtn:hover {

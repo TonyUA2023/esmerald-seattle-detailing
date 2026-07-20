@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_LB_BACKEND_URL || "http://t10868f0sd4tlemfrh4oo82q.213.199.42.255.sslip.io";
+const BACKEND_URL = process.env.NEXT_PUBLIC_LB_BACKEND_URL || "https://t10868f0sd4tlemfrh4oo82q.213.199.42.255.sslip.io";
 
 export async function POST(
   request: Request,

@@ -7,7 +7,7 @@ import { MessageCircle, Send, X } from "lucide-react";
 import { io, Socket } from "socket.io-client";
 import styles from "./ChatWidget.module.css";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_LB_BACKEND_URL || "http://t10868f0sd4tlemfrh4oo82q.213.199.42.255.sslip.io";
+const BACKEND_URL = process.env.NEXT_PUBLIC_LB_BACKEND_URL || "https://t10868f0sd4tlemfrh4oo82q.213.199.42.255.sslip.io";
 const AGENT_TOKEN = process.env.NEXT_PUBLIC_LB_AGENT_TOKEN || "LB_AGENT_9awy10n8";
 
 interface Message {
@@ -46,26 +46,75 @@ export default function ChatWidget() {
   // 1. Fetch Agent Token Config & Initialize Socket
   useEffect(() => {
     setMounted(true);
+    console.log("[LeadBridge ChatWidget Init] Token:", AGENT_TOKEN, "Backend:", BACKEND_URL);
 
     // Fetch agent config via Next.js API proxy to avoid Mixed Content (HTTPS -> HTTP) blocking
     if (AGENT_TOKEN) {
+      console.log("[LeadBridge] Fetching token configuration from /api/leadbridge/token/" + AGENT_TOKEN);
       fetch(`/api/leadbridge/token/${AGENT_TOKEN}`)
         .then((res) => res.json())
         .then((config) => {
+          console.log("[LeadBridge Token Config Success]:", config);
           if (config.tenantId) setTenantId(config.tenantId);
           if (config.botName) setBotName(config.botName);
           if (config.agentName) setAgentName(config.agentName);
           if (config.businessName) setBusinessName(config.businessName);
         })
-        .catch((err) => console.warn("LeadBridge config proxy fetch notice:", err));
+        .catch((err) => console.error("[LeadBridge Token Config Error]:", err));
     }
 
-    // Connect socket.io
-    const s = io(BACKEND_URL, {
-      transports: ["websocket", "polling"],
-      autoConnect: true,
-    });
-    setSocket(s);
+    // Only connect client-side Socket.io if not on HTTPS with an HTTP backend.
+    // This completely prevents Chrome from throwing Mixed Content errors in the console.
+    const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+    const isBackendHttp = BACKEND_URL.startsWith("http://");
+
+    let s: Socket | null = null;
+
+    if (!isHttps || !isBackendHttp) {
+      try {
+        console.log("[LeadBridge] Connecting client Socket.io to:", BACKEND_URL);
+        s = io(BACKEND_URL, {
+          transports: ["websocket", "polling"],
+          autoConnect: true,
+        });
+        setSocket(s);
+
+        s.on("connect", () => {
+          console.log("[LeadBridge Socket Connected Successfully] ID:", s?.id);
+        });
+
+        s.on("new_message", (msg: { id?: string; chatId?: string; senderType: "AI" | "WORKER" | "LEAD"; content: string; createdAt?: string }) => {
+          console.log("[LeadBridge Socket Received Message]:", msg);
+          if (msg.senderType === "AI" || msg.senderType === "WORKER") {
+            setIsTyping(false);
+            const newMsg: Message = {
+              id: msg.id || `msg-${Date.now()}`,
+              sender: "agent",
+              text: msg.content,
+              timestamp: msg.createdAt
+                ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                : new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            };
+
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === newMsg.id || (m.text === newMsg.text && m.sender === "agent"))) {
+                return prev;
+              }
+              return [...prev, newMsg];
+            });
+          }
+        });
+
+        s.on("chat_closed", () => {
+          console.log("[LeadBridge Chat Session Closed Event Received]");
+          setIsTyping(false);
+        });
+      } catch (e) {
+        console.warn("[LeadBridge Socket Init Bypassed]:", e);
+      }
+    } else {
+      console.log("[LeadBridge HTTPS Mode Active] Client-side Socket.io bypassed to eliminate Mixed Content console errors. All messaging runs 100% via secure Next.js HTTPS Proxy.");
+    }
 
     // Load saved localStorage data
     const savedUser = localStorage.getItem("esmerald_chat_user");
@@ -76,82 +125,20 @@ export default function ChatWidget() {
     if (savedTenantId) setTenantId(savedTenantId);
 
     if (savedUser && savedChatId && savedChatId !== "undefined" && savedChatId !== "") {
+      console.log("[LeadBridge Restoring Session] Chat ID:", savedChatId);
       setUserInfo(JSON.parse(savedUser));
       setChatId(savedChatId);
       setIsRegistered(true);
       setUnread(false);
-
-      // Join chat room on reconnect
-      s.emit("join_chat", { chatId: savedChatId });
-    } else if (savedUser && (!savedChatId || savedChatId === "undefined" || savedChatId === "")) {
-      // Auto-repair old/broken local sessions by registering via Next.js API proxy
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setUserInfo(parsedUser);
-        fetch(`/api/leadbridge/leads`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            token: AGENT_TOKEN,
-            name: parsedUser.name,
-            email: parsedUser.email,
-            phone: parsedUser.phone,
-            sourceDomain: typeof window !== "undefined" ? window.location.hostname : "esmeralddetailing.com",
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            const newChatId = data.chatId || data.chat?.id || data.id || "";
-            const newTenantId = data.tenantId || data.chat?.tenantId || "";
-            if (newChatId) {
-              setChatId(newChatId);
-              setIsRegistered(true);
-              setUnread(false);
-              if (newTenantId) setTenantId(newTenantId);
-              localStorage.setItem("esmerald_chat_id", newChatId);
-              if (newTenantId) localStorage.setItem("esmerald_chat_tenant_id", newTenantId);
-              s.emit("join_chat", { chatId: newChatId });
-            }
-          })
-          .catch(console.warn);
-      } catch (e) {
-        console.warn("User parse error:", e);
-      }
+      if (s) s.emit("join_chat", { chatId: savedChatId });
     }
 
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     }
 
-    // Socket message listener for AI & Human responses
-    s.on("new_message", (msg: { id?: string; chatId?: string; senderType: "AI" | "WORKER" | "LEAD"; content: string; createdAt?: string }) => {
-      if (msg.senderType === "AI" || msg.senderType === "WORKER") {
-        setIsTyping(false);
-        const newMsg: Message = {
-          id: msg.id || `msg-${Date.now()}`,
-          sender: "agent",
-          text: msg.content,
-          timestamp: msg.createdAt
-            ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-            : new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        };
-
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === newMsg.id || (m.text === newMsg.text && m.sender === "agent"))) {
-            return prev;
-          }
-          return [...prev, newMsg];
-        });
-      }
-    });
-
-    // Listen for chat closed event from server
-    s.on("chat_closed", () => {
-      setIsTyping(false);
-    });
-
     return () => {
-      s.disconnect();
+      if (s) s.disconnect();
     };
   }, []);
 
@@ -173,10 +160,12 @@ export default function ChatWidget() {
     e.preventDefault();
     if (!userInfo.name.trim() || !userInfo.email.trim() || !userInfo.phone.trim()) return;
 
+    console.log("[LeadBridge Starting New Session] User Info:", userInfo);
     let activeTenantId = tenantId;
     let activeChatId = "";
 
     try {
+      console.log("[LeadBridge] Registering Lead via Proxy /api/leadbridge/leads...");
       const res = await fetch(`/api/leadbridge/leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -192,6 +181,7 @@ export default function ChatWidget() {
 
       if (res.ok) {
         const data = await res.json();
+        console.log("[LeadBridge Lead Registration Response]:", data);
         const extractedChatId = data.chatId || data.chat?.id || data.id || "";
         const extractedTenantId = data.tenantId || data.chat?.tenantId || activeTenantId;
 
@@ -204,13 +194,16 @@ export default function ChatWidget() {
           localStorage.setItem("esmerald_chat_id", activeChatId);
           if (activeTenantId) localStorage.setItem("esmerald_chat_tenant_id", activeTenantId);
 
-          if (socket) {
+          if (socket && socket.connected) {
             socket.emit("join_chat", { chatId: activeChatId });
           }
         }
+      } else {
+        const errorText = await res.text();
+        console.error("[LeadBridge Lead Registration Error Response]:", res.status, errorText);
       }
     } catch (err) {
-      console.warn("LeadBridge session start notice:", err);
+      console.error("[LeadBridge Lead Registration Exception]:", err);
     }
 
     localStorage.setItem("esmerald_chat_user", JSON.stringify(userInfo));
@@ -296,11 +289,13 @@ export default function ChatWidget() {
     };
   };
 
-  const handleSendMessage = (textToSend: string) => {
+  const handleSendMessage = async (textToSend: string) => {
     if (!textToSend.trim()) return;
 
     const currentChatId = chatId || localStorage.getItem("esmerald_chat_id") || "";
     const currentTenantId = tenantId || localStorage.getItem("esmerald_chat_tenant_id") || "";
+
+    console.log("[LeadBridge Sending Message] ChatID:", currentChatId, "TenantID:", currentTenantId, "Content:", textToSend);
 
     // 1. Add user message locally
     const userMsgId = `user-${Date.now()}`;
@@ -315,8 +310,9 @@ export default function ChatWidget() {
     setInputText("");
     setIsTyping(true);
 
-    // 2. Send via Socket if connected and registered with LeadBridge
+    // 2. If client socket is connected (on HTTP / dev environment), attempt socket emission
     if (socket && socket.connected && currentChatId) {
+      console.log("[LeadBridge] Sending via Client Socket.io...");
       socket.emit("send_message", {
         chatId: currentChatId,
         tenantId: currentTenantId,
@@ -324,64 +320,98 @@ export default function ChatWidget() {
         content: textToSend,
       });
 
-      // Timeout fallback in case WebSocket is blocked by browser mixed content policy
       const fallbackTimer = setTimeout(() => {
         setIsTyping((currentlyTyping) => {
           if (currentlyTyping) {
-            console.warn("AI response timeout, using fallback response.");
-            const fallback = getFallbackBotResponse(textToSend);
-            const botMsg: Message = {
-              id: `agent-fallback-${Date.now()}`,
-              sender: "agent",
-              text: fallback.text,
-              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            };
-            setMessages((prev) => [...prev, botMsg]);
-            return false;
+            console.warn("[LeadBridge Client Socket Timeout] Falling back to Server Proxy message relay...");
+            sendViaServerProxy(currentChatId, currentTenantId, textToSend);
           }
           return false;
         });
-      }, 15000);
+      }, 12000);
 
       return () => clearTimeout(fallbackTimer);
     } else {
-      // Offline / Simulated response fallback
-      setTimeout(() => {
-        const botResult = getFallbackBotResponse(textToSend);
-        const botMsg: Message = {
-          id: `agent-${Date.now()}`,
-          sender: "agent",
-          text: botResult.text,
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        };
-        setMessages((prev) => [...prev, botMsg]);
-        setIsTyping(false);
-      }, 1200);
+      // 3. HTTPS Mode: Relaying via HTTPS Server Proxy /api/leadbridge/message
+      console.log("[LeadBridge HTTPS Mode] Relaying message via secure HTTPS Server Proxy /api/leadbridge/message...");
+      await sendViaServerProxy(currentChatId, currentTenantId, textToSend);
     }
+  };
+
+  const sendViaServerProxy = async (activeChatId: string, activeTenantId: string, text: string) => {
+    try {
+      const res = await fetch("/api/leadbridge/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chatId: activeChatId,
+          tenantId: activeTenantId,
+          content: text,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log("[LeadBridge Server Proxy Message Success]:", data);
+        if (data.message?.text) {
+          setIsTyping(false);
+          const botMsg: Message = {
+            id: `msg-proxy-${Date.now()}`,
+            sender: "agent",
+            text: data.message.text,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          };
+          setMessages((prev) => {
+            if (prev.some((m) => m.text === botMsg.text && m.sender === "agent")) return prev;
+            return [...prev, botMsg];
+          });
+          return;
+        }
+      } else {
+        const errorText = await res.text();
+        console.error("[LeadBridge Server Proxy Error Response]:", res.status, errorText);
+      }
+    } catch (err) {
+      console.error("[LeadBridge Server Proxy Exception]:", err);
+    }
+
+    // Local fallback if server proxy also fails
+    console.warn("[LeadBridge] Proxy failed, utilizing local fallback answer");
+    setIsTyping(false);
+    const fallback = getFallbackBotResponse(text);
+    const fallbackMsg: Message = {
+      id: `agent-fallback-${Date.now()}`,
+      sender: "agent",
+      text: fallback.text,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    setMessages((prev) => [...prev, fallbackMsg]);
   };
 
   const handleEndChatSession = () => {
     const currentChatId = chatId || localStorage.getItem("esmerald_chat_id") || "";
     const currentTenantId = tenantId || localStorage.getItem("esmerald_chat_tenant_id") || "";
 
+    console.log("[LeadBridge Ending Chat Session] ChatID:", currentChatId);
+
     if (currentChatId) {
-      // 1. Send close event via WebSocket
       if (socket && socket.connected) {
         socket.emit("close_chat", {
           chatId: currentChatId,
           tenantId: currentTenantId,
           closedBy: "Lead",
         });
-      } else {
-        // Fallback HTTP POST via proxy
-        fetch(`/api/leadbridge/chats/${currentChatId}/close`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }).catch((err) => console.warn("Error closing chat via API:", err));
       }
+
+      fetch(`/api/leadbridge/chats/${currentChatId}/close`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .then((data) => console.log("[LeadBridge Chat Closed Proxy Response]:", data))
+        .catch((err) => console.error("[LeadBridge Close Chat Proxy Error]:", err));
     }
 
-    // 2. Clear local session data & localStorage
     localStorage.removeItem("esmerald_chat_user");
     localStorage.removeItem("esmerald_chat_messages");
     localStorage.removeItem("esmerald_chat_id");
