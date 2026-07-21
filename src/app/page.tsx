@@ -200,8 +200,8 @@ export default function Home() {
             <div className={styles.fleetDecorativeCorner}></div>
             <div className={styles.fleetImageWrapper}>
               <Image 
-                src="/detailing_van.png" 
-                alt="Esmerald Mobile Detailing Van" 
+                src="/work_3.png" 
+                alt="Esmerald Mobile Detailing Fleet" 
                 fill
                 style={{ objectFit: 'cover' }}
               />
