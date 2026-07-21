@@ -50,13 +50,13 @@
   position: absolute;
   bottom: 72px;
   right: 0;
-  width: 360px;
-  height: 520px;
-  max-height: calc(90vh - 100px);
+  width: 380px;
+  height: 580px;
+  max-height: calc(90vh - 90px);
   background: #ffffff;
   border: 1px solid #e4e4e7;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -64,16 +64,18 @@
   transition: all 0.2s ease-in-out;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .chatWidgetWrapper {
-    bottom: 16px;
-    right: 16px;
+    bottom: 12px;
+    right: 12px;
   }
   .chatWindow {
-    width: calc(100vw - 32px);
-    height: calc(100vh - 100px);
-    max-height: 520px;
-    bottom: 66px;
+    width: calc(100vw - 24px);
+    max-width: 440px;
+    height: calc(100dvh - 80px);
+    max-height: calc(100dvh - 80px);
+    bottom: 64px;
+    border-radius: 16px;
   }
 }
 
@@ -266,11 +268,11 @@
 /* Chat Messages Area */
 .messagesArea {
   flex: 1;
-  padding: 20px;
+  padding: 16px 14px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   background: #ffffff;
 }
 
@@ -278,7 +280,7 @@
 .messageWrapper {
   display: flex;
   flex-direction: column;
-  max-width: 80%;
+  max-width: 86%;
 }
 
 .messageWrapper.agent {
