@@ -19,7 +19,7 @@ const MapComponent = dynamic(() => import('@/components/MapComponent'), { ssr: f
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 1, y: 0 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
 };
 
