@@ -78,15 +78,16 @@ export default function Footer({ onOpenBooking }: FooterProps) {
           </ul>
         </div>
 
-        {/* Service Area col */}
+        {/* Service Area col (Local SEO Links) */}
         <div className={styles.footerCol}>
           <h4 className={styles.footerColTitle}>Service Area</h4>
           <ul className={styles.footerList}>
-            <li><Link href="/#map">Seattle</Link></li>
-            <li><Link href="/#map">Bellevue</Link></li>
-            <li><Link href="/#map">Kirkland</Link></li>
-            <li><Link href="/#map">Redmond</Link></li>
-            <li><Link href="/#map">Renton &amp; Tacoma</Link></li>
+            <li><Link href="/locations/wa/seattle">Seattle</Link></li>
+            <li><Link href="/locations/wa/bellevue">Bellevue</Link></li>
+            <li><Link href="/locations/wa/kirkland">Kirkland</Link></li>
+            <li><Link href="/locations/wa/redmond">Redmond</Link></li>
+            <li><Link href="/locations/wa/renton">Renton</Link></li>
+            <li><Link href="/locations/wa/tacoma">Tacoma</Link></li>
           </ul>
         </div>
       </div>
