@@ -68,6 +68,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+        />
+      </head>
+      <body className={`${montserrat.variable} ${inter.variable}`}>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-25270XMLSR"
           strategy="afterInteractive"
@@ -92,12 +98,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-MBFND75X');`,
           }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
-        />
-      </head>
-      <body className={`${montserrat.variable} ${inter.variable}`}>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-MBFND75X"
