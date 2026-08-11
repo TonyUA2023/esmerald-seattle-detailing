@@ -78,15 +78,18 @@ export default function RootLayout({
           src="https://www.googletagmanager.com/gtag/js?id=G-25270XMLSR"
           strategy="afterInteractive"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-25270XMLSR');
-          `}
-        </Script>
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-25270XMLSR');
+            `,
+          }}
+        />
         <Script
           id="gtm-script"
           strategy="afterInteractive"
